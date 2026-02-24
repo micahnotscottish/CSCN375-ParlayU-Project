@@ -3,19 +3,122 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="description" content="Project description goes here" />
-    <title>Project Title</title>
+    <meta name="description" content="ParleyU — a campus-focused prediction and wagering platform for university communities." />
+    <title>ParleyU — University Parlay System</title>
 
-    <!-- Favicon (optional) -->
-    <!-- <link rel="icon" href="favicon.ico"> -->
-
-    <!-- Styles -->
-    <link rel="stylesheet" href="css/styles.css">
-
-    <!-- Theme color for mobile -->
-    <meta name="theme-color" content="#0a84ff">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <h1>hello</h1>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+        <div class="container header-inner">
+            <div class="brand">
+                <h1 class="logo">ParleyU</h1>
+                <p class="tag">Campus predictions, friendly rivalry, shared anticipation</p>
+            </div>
+            <nav class="site-nav" aria-label="Main navigation">
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#events">Events</a></li>
+                    <li><a href="#how">How it works</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main">
+        <section id="home" class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h2>Bring campus events to life with prediction-powered play</h2>
+                    <p class="lead">ParleyU is a market-style prediction platform for students, alumni, and campus communities. Place small-stake wagers on games, elections, competitions, and events — earn points, spark conversation, and celebrate school pride.</p>
+                    <p class="cta-row">
+                        <a class="btn primary" href="#events">Browse Events</a>
+                        <a class="btn" href="#how">How it works</a>
+                    </p>
+                </div>
+                <div class="hero-illustration" aria-hidden="true">
+                    <div class="mock-card">Real-time odds · Campus events · Small stakes</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="container about">
+            <h3>About ParleyU</h3>
+            <p>Our University Parlay System, called ParleyU, is a campus-focused prediction and wagering platform designed to engage students, alumni, and university communities through interactive betting on local and university-related events. Modeled after market-based prediction platforms, University Parlay enables users to place small-stake wagers on outcomes such as athletic games, student organization competitions, campus elections, academic milestones, and special university events.</p>
+            <p>The system addresses declining student engagement and fragmented campus participation by centralizing events into a single, gamified experience that rewards awareness, discussion, and student involvement. ParleyU provides real-time odds, event information, and outcome tracking while maintaining safeguards appropriate for an academic environment. The design vision emphasizes transparency, excitement, and community pride, transforming passive observation into active participation.</p>
+            <p>Emotionally, ParleyU aims to create a sense of shared anticipation, friendly rivalry, and belonging, making campus life feel more connected, dynamic, and fun while reinforcing school identity and culture.</p>
+        </section>
+
+        <section id="features" class="features container">
+            <h3>Features</h3>
+            <ul class="feature-list">
+                <li><strong>Real-time odds:</strong> Live markets for campus events.</li>
+                <li><strong>Small-stake wagering:</strong> Low-risk participation suited to campus rules.</li>
+                <li><strong>Event centralization:</strong> Athletics, elections, competitions and more.</li>
+                <li><strong>Safeguards:</strong> Responsible play rules and admin oversight.</li>
+                <li><strong>Gamification:</strong> Leaderboards, achievements, and community rewards.</li>
+            </ul>
+        </section>
+
+        <section id="events" class="container events">
+            <h3>Sample Events</h3>
+            <div class="grid">
+                <article class="card">
+                    <h4>Campus Football — Homecoming</h4>
+                    <p class="muted">Sep 18 — Odds update: 2d 4h</p>
+                    <p>Will the home team win by more than 7 points?</p>
+                    <p class="card-meta">Market: Win by &gt;7 • Odds: 1.8</p>
+                    <p><a class="btn small" href="#">Place Prediction</a></p>
+                </article>
+
+                <article class="card">
+                    <h4>Student Government Election</h4>
+                    <p class="muted">Nov 3 — Polls close 18:00</p>
+                    <p>Who will be elected President of the Student Union?</p>
+                    <p class="card-meta">Market: Election Winner • Odds: see market</p>
+                    <p><a class="btn small" href="#">View Market</a></p>
+                </article>
+
+                <article class="card">
+                    <h4>Robotics Club Challenge</h4>
+                    <p class="muted">Apr 12 — Finals</p>
+                    <p>Which team will secure first place in the robotics challenge?</p>
+                    <p class="card-meta">Market: Competition Winner</p>
+                    <p><a class="btn small" href="#">Join Market</a></p>
+                </article>
+            </div>
+            <p class="more">Want your event listed? Contact campus admins to propose a market.</p>
+        </section>
+
+        <section id="how" class="container how">
+            <h3>How ParleyU Works</h3>
+            <ol>
+                <li>Browse or propose campus events and markets.</li>
+                <li>Place small-stake predictions on outcomes you think will happen.</li>
+                <li>Markets update with real-time odds; follow outcomes live.</li>
+                <li>Earn points, climb leaderboards, and celebrate with your community.</li>
+            </ol>
+            <p class="muted">Admins can configure safeguards and limits to keep the experience appropriate for campus.</p>
+        </section>
+
+        <section id="contact" class="container contact">
+            <h3>Contact & Next Steps</h3>
+            <p>For a demo, deployment questions, or to request an integration with campus systems, email <a href="mailto:parleyu@university.edu">parleyu@university.edu</a>.</p>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>© <span id="year"></span> ParleyU — Designed for campus engagement. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Small enhancement: update footer year
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
 </body>
 </html>
