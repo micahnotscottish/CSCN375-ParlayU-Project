@@ -1,0 +1,36 @@
+{
+  "balance": 25.00,
+  "markets": [
+    {
+      "title": "Homecoming Football — Winner",
+      "odds": "1.8",
+      "closes": "Sep 18",
+      "defaultStake": 5
+    },
+    {
+      "title": "Student Gov Election — Winner",
+      "odds": "2.1",
+      "closes": "Nov 3",
+      "defaultStake": 10
+    },
+    {
+      "title": "Campus Football — Total",
+      "odds": "1.9",
+      "closes": "Oct 1",
+      "defaultStake": 5
+    },
+    {
+      "title": "Songs at Convo — Over/Under 3.5",
+      "odds": "3.5",
+      "closes": "Sep 24",
+      "defaultStake": 2.5
+    },
+    {
+      "title": "Dondi Costin Backflip — Yes/No",
+      "odds": "0.5",
+      "closes": "Dec 31",
+      "defaultStake": 1
+    }
+  ],
+  "recentBets": []
+}

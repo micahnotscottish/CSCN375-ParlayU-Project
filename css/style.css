@@ -36,7 +36,7 @@
 
 /* Over / Under buttons (red = Over, green = Under) */
 .btn.over, .btn.bet-over{
-  background: linear-gradient(90deg, #ff7b7b, #ff4d4f);
+  background: linear-gradient(90deg, #46e79b, #00c46a);
   color: #fff;
   border: 1px solid rgba(255,77,79,0.18);
   box-shadow: 0 10px 36px var(--glow-red), 0 4px 14px rgba(2,8,20,0.28);
@@ -45,7 +45,7 @@
 .btn.over:hover, .btn.bet-over:hover{ transform: translateY(-5px); box-shadow: 0 24px 80px rgba(255,77,79,0.20), 0 8px 28px rgba(2,8,20,0.32) }
 
 .btn.under, .btn.bet-under{
-  background: linear-gradient(90deg, #46e79b, #00c46a);
+  background: linear-gradient(90deg, #ff7b7b, #ff4d4f);
   color: #021026;
   border: 1px solid rgba(0,200,120,0.14);
   box-shadow: 0 10px 36px var(--glow-green), 0 4px 14px rgba(2,8,20,0.22);

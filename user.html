@@ -44,21 +44,8 @@
 
     <section id="markets" class="container">
       <h3>Active Markets</h3>
-      <div class="grid">
-        <article class="card">
-          <h4>Homecoming Football — Winner</h4>
-          <p class="muted">Closes: Sep 18</p>
-          <p>Odds: Home 1.8 — Away 2.0</p>
-          <p><button class="btn small" data-market="Homecoming Football">Place Prediction</button></p>
-        </article>
-
-        <article class="card">
-          <h4>Student Gov Election — Winner</h4>
-          <p class="muted">Closes: Nov 3</p>
-          <p>Multiple candidates — see market</p>
-          <p><button class="btn small" data-market="Student Gov Election">View Market</button></p>
-        </article>
-      </div>
+      <!-- grid will be filled dynamically from JSON -->
+      <div class="grid"></div>
     </section>
 
     <section id="recent" class="container">
@@ -80,22 +67,29 @@
     const balanceEl = document.getElementById('balance');
     const betsList = document.getElementById('betsList');
     let balance = 25.00;
+    let recentBets = [];
     const updateBalance = () => balanceEl.textContent = `$${balance.toFixed(2)}`;
 
-    // Inline two-sided market UI (no popup). Multiple markets: Over/Under betting.
-    (function buildInlineMarkets(){
+    // render the list of recent bets
+    function renderRecentBets(bets){
+      betsList.innerHTML = '';
+      if (!bets || bets.length === 0) {
+        betsList.innerHTML = '<p class="muted">No bets placed yet.</p>';
+        return;
+      }
+      bets.forEach(bet => {
+        const p = document.createElement('p');
+        p.innerHTML = `<strong>${bet.market} — ${bet.side}</strong> — $${bet.stake.toFixed(2)} placed @ ${bet.odds} — <span class="muted">${bet.status||'pending'}</span>`;
+        betsList.prepend(p);
+      });
+    }
+
+    // builds inline markets given an array of market objects
+    function buildInlineMarkets(markets){
       const marketsSection = document.getElementById('markets');
       if (!marketsSection) return;
-      // clear existing grid
       const grid = marketsSection.querySelector('.grid');
       if (grid) grid.remove();
-
-      // Market data
-      const markets = [
-        { title: 'Campus Football — Total', odds: '1.9' },
-        { title: 'Songs at Convo — Over/Under 3.5', odds: '3.5' },
-        { title: 'Dondi Costin Backflip — Yes/No', odds: '.5' }
-      ];
 
       markets.forEach((market, idx)=>{
         const box = document.createElement('div');
@@ -116,15 +110,15 @@
 
         box.innerHTML = `
           <div class="market-half" style="flex:1;padding:0;text-align:center;display:flex;flex-direction:column;align-items:stretch;justify-content:stretch;">
-            <button class="btn over full" id="${overBtnId}" style="flex:1;border-radius:12px 0 0 12px;padding:36px 0;font-size:1.25rem;">Over</button>
+            <button class="btn under full" id="${underBtnId}" style="flex:1;border-radius:12px 0 0 12px;padding:36px 0;font-size:1.25rem;">Under</button>
           </div>
           <div style="flex:0 0 360px;padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--card-bg);">
             <h4 id="${titleId}">${market.title}</h4>
             <div class="muted" style="margin:8px 0">O/U <span id="${oddsId}">${market.odds}</span></div>
-            <input id="${stakeId}" type="number" min="1" step="0.5" value="5" style="padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);width:160px;text-align:center;margin-bottom:12px;font-size:1rem;">
+            <input id="${stakeId}" type="number" min="1" step="0.5" value="${market.defaultStake||5}" style="padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);width:160px;text-align:center;margin-bottom:12px;font-size:1rem;">
           </div>
           <div class="market-half" style="flex:1;padding:0;text-align:center;display:flex;flex-direction:column;align-items:stretch;justify-content:stretch;">
-            <button class="btn under full" id="${underBtnId}" style="flex:1;border-radius:0 12px 12px 0;padding:36px 0;font-size:1.25rem;">Under</button>
+            <button class="btn over full" id="${overBtnId}" style="flex:1;border-radius:0 12px 12px 0;padding:36px 0;font-size:1.25rem;">Over</button>
           </div>
         `;
 
@@ -132,27 +126,42 @@
 
         // handlers for placing inline bets
         const stakeInput = document.getElementById(stakeId);
-        const odds = parseFloat(market.odds) || 1.9;
+        const odds = parseFloat(market.odds) || 1.0;
         const titleEl = document.getElementById(titleId);
         function placeInlineBet(side){
           const stake = parseFloat(stakeInput.value) || 0;
           if (stake <= 0){ alert('Enter a valid stake.'); return; }
           if (stake > balance){ alert('Insufficient balance.'); return; }
           balance -= stake; updateBalance();
-          const p = document.createElement('p');
-          p.innerHTML = `<strong>${titleEl.textContent} — ${side}</strong> — $${stake.toFixed(2)} placed @ ${odds} — <span class="muted">pending</span>`;
-          betsList.prepend(p);
+          const betObj = { market: titleEl.textContent, side, stake, odds, status: 'pending' };
+          recentBets.unshift(betObj);
+          renderRecentBets(recentBets);
         }
 
-        // attach only to the edge buttons
         const elOver = document.getElementById(overBtnId);
         if (elOver) elOver.addEventListener('click', ()=> placeInlineBet('Over'));
         const elUnder = document.getElementById(underBtnId);
         if (elUnder) elUnder.addEventListener('click', ()=> placeInlineBet('Under'));
       });
-    })();
+    }
 
-    // Wire up the account quick buttons
+    // load JSON data and initialize UI
+    async function loadData(){
+      try {
+        const res = await fetch('data/data.json');
+        if (!res.ok) throw new Error(res.statusText);
+        const json = await res.json();
+        balance = parseFloat(json.balance) || balance;
+        recentBets = json.recentBets || [];
+        updateBalance();
+        buildInlineMarkets(json.markets || []);
+        renderRecentBets(recentBets);
+      } catch(err){
+        console.error('Unable to load data file:', err);
+      }
+    }
+
+    // account quick buttons unchanged
     document.getElementById('placeBet').addEventListener('click', ()=> { const el = document.getElementById('stakeInput'); if(el) el.focus(); else alert('Use the Over/Under controls to place a bet.'); });
     document.getElementById('viewBets').addEventListener('click', ()=> alert('Recent bets are shown below.'));
     document.getElementById('deposit').addEventListener('click', ()=>{
@@ -167,7 +176,7 @@
       balance -= amt; updateBalance(); alert(`Withdrew $${amt.toFixed(2)}.`);
     });
 
-    updateBalance();
+    loadData();
   </script>
 </body>
 </html>
