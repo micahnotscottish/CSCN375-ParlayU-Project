@@ -68,7 +68,10 @@
     const betsList = document.getElementById('betsList');
     let balance = 25.00;
     let recentBets = [];
-    const updateBalance = () => balanceEl.textContent = `$${balance.toFixed(2)}`;
+    const updateBalance = () => {
+      balanceEl.textContent = `$${balance.toFixed(2)}`;
+      localStorage.setItem('balance', balance.toString());
+    };
 
     // render the list of recent bets
     function renderRecentBets(bets){
@@ -112,7 +115,7 @@
           <div class="market-half" style="flex:1;padding:0;text-align:center;display:flex;flex-direction:column;align-items:stretch;justify-content:stretch;">
             <button class="btn under full" id="${underBtnId}" style="flex:1;border-radius:12px 0 0 12px;padding:36px 0;font-size:1.25rem;">Under</button>
           </div>
-          <div style="flex:0 0 360px;padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--card-bg);">
+          <div class="market-center" data-index="${idx}" style="flex:0 0 360px;padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--card-bg);cursor:pointer;">
             <h4 id="${titleId}">${market.title}</h4>
             <div class="muted" style="margin:8px 0">O/U <span id="${oddsId}">${market.odds}</span></div>
             <input id="${stakeId}" type="number" min="1" step="0.5" value="${market.defaultStake||5}" style="padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);width:160px;text-align:center;margin-bottom:12px;font-size:1rem;">
@@ -136,12 +139,19 @@
           const betObj = { market: titleEl.textContent, side, stake, odds, status: 'pending' };
           recentBets.unshift(betObj);
           renderRecentBets(recentBets);
+          localStorage.setItem('recentBets', JSON.stringify(recentBets));
         }
 
         const elOver = document.getElementById(overBtnId);
         if (elOver) elOver.addEventListener('click', ()=> placeInlineBet('Over'));
         const elUnder = document.getElementById(underBtnId);
         if (elUnder) elUnder.addEventListener('click', ()=> placeInlineBet('Under'));
+
+        // navigate to detail page when middle section clicked
+        const centerDiv = box.querySelector('.market-center');
+        if (centerDiv) centerDiv.addEventListener('click', () => {
+          window.location.href = `market.html?idx=${idx}`;
+        });
       });
     }
 
@@ -153,6 +163,13 @@
         const json = await res.json();
         balance = parseFloat(json.balance) || balance;
         recentBets = json.recentBets || [];
+        // merge any stored values
+        const storedBal = parseFloat(localStorage.getItem('balance'));
+        if (!isNaN(storedBal)) balance = storedBal;
+        const storedBets = localStorage.getItem('recentBets');
+        if (storedBets) {
+          try { recentBets = JSON.parse(storedBets).concat(recentBets); } catch{};
+        }
         updateBalance();
         buildInlineMarkets(json.markets || []);
         renderRecentBets(recentBets);

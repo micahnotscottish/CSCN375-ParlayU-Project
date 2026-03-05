@@ -2,34 +2,53 @@
   "balance": 25.00,
   "markets": [
     {
-      "title": "Homecoming Football — Winner",
-      "odds": "1.8",
+      "title": "Homecoming Football Winner",
+      "odds": ".5",
       "closes": "Sep 18",
-      "defaultStake": 5
+      "defaultStake": 5,
+      "description": "Which team will win the homecoming game?",
+      "comments": [
+        { "user": "alice", "text": "I think the home team is strong this year." },
+        { "user": "bob", "text": "Away team has an aggressive defense, watch out." },
+        { "user": "devon", "text": "I bet next years tuition on this" }
+      ]
     },
     {
-      "title": "Student Gov Election — Winner",
-      "odds": "2.1",
+      "title": "Moges Johnson Wins SGA Election",
+      "odds": ".5",
       "closes": "Nov 3",
-      "defaultStake": 10
+      "defaultStake": 10,
+      "description": "Will Moges Win? Polls close November 3rd.",
+      "comments": [
+        { "user": "charlie", "text": "Moges has my vote." },
+        { "user": "preston", "text": "Moges tried to spell beter as bettor. And you expect him to win an election?" }
+      ]
     },
     {
-      "title": "Campus Football — Total",
-      "odds": "1.9",
+      "title": "Liberty Football — Total Points",
+      "odds": "25.5",
       "closes": "Oct 1",
-      "defaultStake": 5
+      "defaultStake": 5,
+      "description": "Bet on the total points scored in the campus football game.",
+      "comments": []
     },
     {
-      "title": "Songs at Convo — Over/Under 3.5",
+      "title": "Songs at Convo",
       "odds": "3.5",
       "closes": "Sep 24",
-      "defaultStake": 2.5
+      "defaultStake": 2.5,
+      "description": "Guess whether more or fewer than 3.5 songs will be played during convocation.",
+      "comments": []
     },
     {
-      "title": "Dondi Costin Backflip — Yes/No",
+      "title": "Dondi Costin Backflips On Stage",
       "odds": "0.5",
       "closes": "Dec 31",
-      "defaultStake": 1
+      "defaultStake": 1,
+      "description": "Will Dondi Costin perform a backflip this year?",
+      "comments": [
+        { "user": "charlie", "text": "I misclicked and bet my dads 401k on this. Please dondi im begging" }
+      ]
     }
   ],
   "recentBets": []

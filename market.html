@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ParleyU — Market</title>
+  <meta name="description" content="Detailed view for a single betting market." />
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <h1 class="logo">ParleyU</h1>
+        <p class="tag">Market</p>
+      </div>
+      <nav class="site-nav" aria-label="Main navigation">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="user.html">Dashboard</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" id="main">
+    <section id="marketDetail" class="card" style="margin-top:18px;">
+      <h2 id="detailTitle">Loading…</h2>
+      <p class="muted" id="detailCloses"></p>
+      <p class="muted" id="detailOdds"></p>
+      <p id="detailDescription"></p>
+      <div id="betControls" style="margin-top:16px;">
+        <p class="muted">Balance: $<span id="balanceVal">0</span></p>
+        <div class="card market-card highlight highlight-corner" style="display:flex;gap:0;align-items:stretch;justify-content:center;margin-top:16px;overflow:hidden;border-radius:12px;">
+          <div class="market-half" style="flex:1;padding:0;text-align:center;display:flex;flex-direction:column;align-items:stretch;justify-content:stretch;">
+            <button class="btn under full" id="betUnder" style="flex:1;border-radius:12px 0 0 12px;padding:36px 0;font-size:1.25rem;">Under</button>
+          </div>
+          <div style="flex:0 0 360px;padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--card-bg);">
+            <div style="margin:8px 0">Stake</div>
+            <input id="marketStake" type="number" min="1" step="0.5" value="5" style="padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);width:160px;text-align:center;margin-bottom:12px;font-size:1rem;">
+          </div>
+          <div class="market-half" style="flex:1;padding:0;text-align:center;display:flex;flex-direction:column;align-items:stretch;justify-content:stretch;">
+            <button class="btn over full" id="betOver" style="flex:1;border-radius:0 12px 12px 0;padding:36px 0;font-size:1.25rem;">Over</button>
+          </div>
+        </div>
+      </div>
+      <h3>Comments</h3>
+      <div id="comments"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p class="muted"><a href="user.html">← Back to dashboard</a></p>
+    </div>
+  </footer>
+
+  <script>
+    function getQueryParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name);
+    }
+
+    let balance = 0;
+    let recentBets = [];
+    function updateBalanceDisplay(){
+      document.getElementById('balanceVal').textContent = balance.toFixed(2);
+      localStorage.setItem('balance', balance.toString());
+    }
+
+    async function loadMarket() {
+      const idx = parseInt(getQueryParam('idx'));
+      if (isNaN(idx)) {
+        document.getElementById('detailTitle').textContent = 'Invalid market';
+        return;
+      }
+      try {
+        const res = await fetch('data/data.json');
+        if (!res.ok) throw new Error(res.statusText);
+        const json = await res.json();
+        // initialize balance/recentBets from json
+        balance = parseFloat(json.balance) || 0;
+        recentBets = json.recentBets || [];
+        // merge stored
+        const storedBal = parseFloat(localStorage.getItem('balance'));
+        if (!isNaN(storedBal)) balance = storedBal;
+        const storedBets = localStorage.getItem('recentBets');
+        if (storedBets) {
+          try { recentBets = JSON.parse(storedBets).concat(recentBets); } catch{};
+        }
+        updateBalanceDisplay();
+
+        const markets = json.markets || [];
+        if (idx < 0 || idx >= markets.length) {
+          document.getElementById('detailTitle').textContent = 'Market not found';
+          return;
+        }
+        const market = markets[idx];
+        document.getElementById('detailTitle').textContent = market.title;
+        document.getElementById('detailCloses').textContent = 'Closes: ' + (market.closes || 'n/a');
+        document.getElementById('detailOdds').textContent = 'Line: ' + (market.odds || 'n/a');
+        document.getElementById('detailDescription').textContent = market.description || '';
+
+        const commentsEl = document.getElementById('comments');
+        commentsEl.innerHTML = '';
+        if (!market.comments || market.comments.length === 0) {
+          commentsEl.innerHTML = '<p class="muted">No comments yet.</p>';
+        } else {
+          market.comments.forEach(c => {
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.style.marginBottom = '8px';
+            div.innerHTML = `<strong>${c.user}</strong>: ${c.text}`;
+            commentsEl.appendChild(div);
+          });
+        }
+
+        // attach betting controls
+        const stakeInput = document.getElementById('marketStake');
+        const overBtn = document.getElementById('betOver');
+        const underBtn = document.getElementById('betUnder');
+        function placeBet(side){
+          const stake = parseFloat(stakeInput.value) || 0;
+          if (stake <= 0){ alert('Enter a valid stake.'); return; }
+          if (stake > balance){ alert('Insufficient balance.'); return; }
+          balance -= stake; updateBalanceDisplay();
+          const betObj = { market: market.title, side, stake, odds: parseFloat(market.odds)||0, status:'pending' };
+          recentBets.unshift(betObj);
+          localStorage.setItem('recentBets', JSON.stringify(recentBets));
+          alert(`Placed $${stake.toFixed(2)} on ${side}.`);
+        }
+        overBtn.addEventListener('click', ()=> placeBet('Over'));
+        underBtn.addEventListener('click', ()=> placeBet('Under'));
+
+      } catch (err) {
+        console.error('failed to load market', err);
+      }
+    }
+
+    loadMarket();
+  </script>
+</body>
+</html>
