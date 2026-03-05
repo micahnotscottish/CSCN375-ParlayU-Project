@@ -6,6 +6,13 @@
   <title>ParleyU — Market</title>
   <meta name="description" content="Detailed view for a single betting market." />
   <link rel="stylesheet" href="css/style.css">
+  <!-- ensure comment cards are readable on narrow screens -->
+  <style>
+    #comments .card {
+      width: 100%;
+      padding: 12px;
+    }
+  </style>
 </head>
 <body>
   <header class="site-header">
@@ -91,21 +98,26 @@
         updateBalanceDisplay();
 
         const markets = json.markets || [];
+        console.log('loadMarket idx', idx, 'markets length', markets.length);
         if (idx < 0 || idx >= markets.length) {
           document.getElementById('detailTitle').textContent = 'Market not found';
           return;
         }
         const market = markets[idx];
+        console.log('selected market', market.title, market.comments);
         document.getElementById('detailTitle').textContent = market.title;
         document.getElementById('detailCloses').textContent = 'Closes: ' + (market.closes || 'n/a');
         document.getElementById('detailOdds').textContent = 'Line: ' + (market.odds || 'n/a');
         document.getElementById('detailDescription').textContent = market.description || '';
 
         const commentsEl = document.getElementById('comments');
-        commentsEl.innerHTML = '';
+        // placeholder while data loads (avoids misleading “no comments” state on slow mobile)
+        commentsEl.textContent = 'Loading comments…';
+
         if (!market.comments || market.comments.length === 0) {
           commentsEl.innerHTML = '<p class="muted">No comments yet.</p>';
         } else {
+          commentsEl.innerHTML = '';
           market.comments.forEach(c => {
             const div = document.createElement('div');
             div.className = 'card';
